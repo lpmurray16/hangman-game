@@ -1,0 +1,49 @@
+<div class="login-container">
+  <div class="card login-card">
+    <h1>Login</h1>
+    <p class="mb-3">Sign in to your account to play Hangman!</p>
+    
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          formControlName="email" 
+          placeholder="Enter your email"
+          [ngClass]="{'error': submitted && f['email'].errors}"
+        >
+        <div *ngIf="submitted && f['email'].errors" class="error-message">
+          <span *ngIf="f['email'].errors['required']">Email is required</span>
+          <span *ngIf="f['email'].errors['email']">Please enter a valid email address</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          formControlName="password" 
+          placeholder="Enter your password"
+          [ngClass]="{'error': submitted && f['password'].errors}"
+        >
+        <div *ngIf="submitted && f['password'].errors" class="error-message">
+          <span *ngIf="f['password'].errors['required']">Password is required</span>
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <button type="submit" class="btn wiggle">Login</button>
+      </div>
+      
+      <div *ngIf="error" class="error-card mt-3">
+        {{ error }}
+      </div>
+    </form>
+    
+    <div class="register-link mt-3">
+      <p>Don't have an account? <a routerLink="/register">Register here</a></p>
+    </div>
+  </div>
+</div>

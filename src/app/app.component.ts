@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from './services/auth.service';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { AuthService } from './services/auth.service';
+import { User } from './types';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -11,15 +13,25 @@ import { Router } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'hangman-game';
+  currentUser: User | null = null;
+  private userSubscription: Subscription | null = null;
   
-  constructor(public authService: AuthService, private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
   
   ngOnInit(): void {
-    // Initialize component
+    this.userSubscription = this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    });
   }
-  
+
+  ngOnDestroy(): void {
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
+  }
+
   logout(): void {
     this.authService.logout().subscribe({
       next: () => {
@@ -27,8 +39,6 @@ export class AppComponent implements OnInit {
       },
       error: (error) => {
         console.error('Logout error:', error);
-        // Even if the server request fails, we should clear local data
-        this.router.navigate(['/login']);
       }
     });
   }

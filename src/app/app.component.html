@@ -2,16 +2,17 @@
   <header>
     <h1>Hangman Game</h1>
     <nav>
-      <ng-container *ngIf="!authService.isLoggedIn">
+      <a routerLink="/home" routerLinkActive="active">Home</a>
+      <ng-container *ngIf="!currentUser">
         <a routerLink="/login" routerLinkActive="active">Login</a>
         <a routerLink="/register" routerLinkActive="active">Register</a>
       </ng-container>
-      <ng-container *ngIf="authService.isLoggedIn">
-        <a routerLink="/game" routerLinkActive="active">Play Game</a>
+      <ng-container *ngIf="currentUser">
+        <div class="user-info">
+          <span class="user-icon">👤</span>
+          <span>{{ currentUser.email }}</span>
+        </div>
         <a href="javascript:void(0)" (click)="logout()" class="logout-btn">Logout</a>
-        <span class="user-info" *ngIf="authService.currentUserValue">
-          <i class="user-icon">👤</i> {{ authService.currentUserValue.email }}
-        </span>
       </ng-container>
     </nav>
   </header>
@@ -21,6 +22,6 @@
   </main>
 
   <footer>
-    <p>&copy; 2023 Hangman Game</p>
+    <p>© 2023 Hangman Game - A Neobrutalism Project</p>
   </footer>
 </div>

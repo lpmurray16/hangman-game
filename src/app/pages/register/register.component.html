@@ -1,0 +1,50 @@
+<div class="register-container">
+  <div class="card register-card">
+    <h1>Register</h1>
+    <p class="mb-3">Create an account to start playing Hangman!</p>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" formControlName="username" placeholder="Choose a username"
+          [ngClass]="{'error': submitted && f['username'].errors}">
+        <div *ngIf="submitted && f['username'].errors" class="error-message">
+          <span *ngIf="f['username'].errors['required']">Username is required</span>
+          <span *ngIf="f['username'].errors['minlength']">Username must be at least 3 characters</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" formControlName="email" placeholder="Enter your email"
+          [ngClass]="{'error': submitted && f['email'].errors}">
+        <div *ngIf="submitted && f['email'].errors" class="error-message">
+          <span *ngIf="f['email'].errors['required']">Email is required</span>
+          <span *ngIf="f['email'].errors['email']">Please enter a valid email address</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" formControlName="password" placeholder="Create a password"
+          [ngClass]="{'error': submitted && f['password'].errors}">
+        <div *ngIf="submitted && f['password'].errors" class="error-message">
+          <span *ngIf="f['password'].errors['required']">Password is required</span>
+          <span *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</span>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn wiggle">Register</button>
+      </div>
+
+      <div *ngIf="error" class="error-card mt-3">
+        {{ error }}
+      </div>
+    </form>
+
+    <div class="login-link mt-3">
+      <p>Already have an account? <a routerLink="/login">Login here</a></p>
+    </div>
+  </div>
+</div>

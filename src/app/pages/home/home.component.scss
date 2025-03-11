@@ -1,0 +1,52 @@
+.home-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.welcome-card {
+  background-color: var(--light);
+  border-width: calc(var(--border-width) * 1.5);
+  text-align: center;
+}
+
+.welcome-card h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  display: inline-block;
+}
+
+.game-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.features-card {
+  background-color: var(--accent);
+}
+
+.feature-list {
+  list-style-position: inside;
+  padding-left: 1rem;
+}
+
+.feature-list li {
+  margin-bottom: 0.5rem;
+  position: relative;
+  font-weight: bold;
+}
+
+.feature-list li::before {
+  content: '→';
+  position: absolute;
+  left: -1rem;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
