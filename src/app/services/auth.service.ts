@@ -8,7 +8,7 @@ import { User, UserCreate, UserLogin } from '../types';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8000'; // Update with your actual API URL
+  private apiUrl = 'https://fastapi-supabase-sho6.onrender.com'; // Update with your actual API URL
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   private tokenKey = 'auth_token';
@@ -58,9 +58,10 @@ export class AuthService {
   }
 
   private handleAuthResponse(response: any): void {
-    if (response && response.data && response.data.user) {
-      const user = response.data.user as User;
-      const token = response.data.session?.access_token;
+    console.log('Response:', response);
+    if (response) {
+      const user = response.user as User;
+      const token = response.session?.access_token;
       
       if (token) {
         localStorage.setItem(this.tokenKey, token);

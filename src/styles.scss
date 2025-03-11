@@ -1,4 +1,4 @@
-/* Neobrutalism Theme for Hangman Game */
+/* Dark Neobrutalism Theme for Hangman Game */
 
 /* Variables */
 :root {
@@ -6,11 +6,11 @@
     --primary: #ff6b6b;
     --secondary: #4ecdc4;
     --accent: #ffe66d;
-    --dark: #292f36;
-    --light: #f7fff7;
+    --dark: #f7fff7;
+    --light: #1a1a1a;
 
     /* Neobrutalism Specific */
-    --shadow-color: rgba(0, 0, 0, 0.8);
+    --shadow-color: rgba(255, 244, 224, 0.9); /* Cream color for box shadow */
     --border-width: 3px;
     --border-radius: 4px;
     --shadow-offset: 5px;
@@ -20,6 +20,13 @@
     --font-family: 'Courier New', monospace;
     --font-size-base: 16px;
     --line-height: 1.5;
+    
+    /* Dark Theme Colors */
+    --dark-bg: #121212;
+    --dark-card: #1e1e1e;
+    --dark-border: #ff6b6b;
+    --dark-text: #f7fff7;
+    --dark-shadow: rgba(255, 244, 224, 0.7); /* Cream shadow for form elements */
 }
 
 /* Reset & Base Styles */
@@ -35,8 +42,8 @@ body {
     font-family: var(--font-family);
     font-size: var(--font-size-base);
     line-height: var(--line-height);
-    background-color: var(--light);
-    color: var(--dark);
+    background-color: var(--dark-bg);
+    color: var(--dark-text);
 }
 
 /* Typography */
@@ -75,7 +82,7 @@ a {
 }
 
 a:hover {
-    color: var(--dark);
+    color: var(--accent);
 }
 
 a:hover::after {
@@ -98,7 +105,7 @@ button,
     border: var(--border-width) solid var(--dark);
     border-radius: var(--border-radius);
     background-color: var(--primary);
-    color: var(--dark);
+    color: #000000; /* Darker text for better contrast on primary buttons */
     cursor: pointer;
     position: relative;
     transition: transform 0.1s ease;
@@ -120,16 +127,18 @@ button:active,
 
 .btn-secondary {
     background-color: var(--secondary);
+    color: #000000; /* Darker text for better contrast */
 }
 
 .btn-accent {
     background-color: var(--accent);
+    color: #000000; /* Darker text for better contrast */
 }
 
 /* Cards */
 .card {
-    background-color: white;
-    border: var(--border-width) solid var(--dark);
+    background-color: var(--dark-card);
+    border: var(--border-width) solid var(--dark-border);
     border-radius: var(--border-radius);
     padding: 1.5rem;
     margin-bottom: 1.5rem;
@@ -150,12 +159,13 @@ textarea {
     font-family: var(--font-family);
     font-size: 1rem;
     padding: 0.75rem;
-    border: var(--border-width) solid var(--dark);
+    border: var(--border-width) solid var(--dark-border);
     border-radius: var(--border-radius);
-    background-color: white;
+    background-color: var(--dark-card);
+    color: var(--dark-text);
     margin-bottom: 1rem;
     width: 100%;
-    box-shadow: 3px 3px 0 0 var(--shadow-color);
+    box-shadow: 3px 3px 0 0 var(--dark-shadow);
 }
 
 input:focus,
@@ -249,8 +259,8 @@ label {
     align-items: center;
     gap: 2rem;
     padding: 2rem;
-    background-color: white;
-    border: var(--border-width) solid var(--dark);
+    background-color: var(--dark-card);
+    border: var(--border-width) solid var(--dark-border);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
 }
@@ -276,9 +286,10 @@ label {
     justify-content: center;
     font-weight: bold;
     font-size: 1.2rem;
-    border: var(--border-width) solid var(--dark);
-    background-color: white;
-    box-shadow: 3px 3px 0 0 var(--shadow-color);
+    border: var(--border-width) solid var(--dark-border);
+    background-color: var(--dark-card);
+    color: var(--dark-text);
+    box-shadow: 3px 3px 0 0 var(--dark-shadow);
     cursor: pointer;
     transition: all 0.1s ease;
 }
@@ -286,6 +297,7 @@ label {
 .letter-btn:hover {
     transform: translate(-2px, -2px);
     box-shadow: 5px 5px 0 0 var(--shadow-color);
+    color: var(--accent); /* Higher contrast on hover */
 }
 
 .letter-btn:active {
@@ -294,8 +306,8 @@ label {
 }
 
 .letter-btn.used {
-    background-color: #e0e0e0;
-    color: #888;
+    background-color: #333333;
+    color: #666666;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
@@ -310,12 +322,13 @@ label {
 .letter-space {
     width: 40px;
     height: 40px;
-    border-bottom: var(--border-width) solid var(--dark);
+    border-bottom: var(--border-width) solid var(--dark-border);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
     font-weight: bold;
+    color: var(--dark-text);
 }
 
 .game-status {
@@ -327,12 +340,15 @@ label {
     box-shadow: var(--box-shadow);
     text-align: center;
     margin-top: 2rem;
+    color: #000000; /* Darker text for better contrast */
 }
 
 .win-status {
-    background-color: #a8e6cf;
+    background-color: #2d6a4f;
+    color: var(--dark-text);
 }
 
 .lose-status {
-    background-color: #ff8a80;
+    background-color: #7f1d1d;
+    color: var(--dark-text);
 }
