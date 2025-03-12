@@ -1,17 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
-import { catchError, tap, map } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { User, UserCreate, UserLogin } from '../types';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://fastapi-supabase-sho6.onrender.com'; // Update with your actual API URL
+  private apiUrl = environment.backend_api_url;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   private tokenKey = 'auth_token';
+  private refreshTokenKey = 'refresh_token';
   private userKey = 'user_data';
 
   constructor(private http: HttpClient) {
@@ -21,13 +23,12 @@ export class AuthService {
   private loadStoredUser(): void {
     const storedToken = localStorage.getItem(this.tokenKey);
     const storedUser = localStorage.getItem(this.userKey);
-    
+
     if (storedToken && storedUser) {
       try {
         this.currentUserSubject.next(JSON.parse(storedUser));
       } catch (e) {
-        localStorage.removeItem(this.tokenKey);
-        localStorage.removeItem(this.userKey);
+        this.clearAuthData();
       }
     }
   }
@@ -48,24 +49,28 @@ export class AuthService {
 
   logout(): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/auth/logout`, {}).pipe(
-      tap(() => {
-        localStorage.removeItem(this.tokenKey);
-        localStorage.removeItem(this.userKey);
-        this.currentUserSubject.next(null);
-      }),
+      tap(() => this.clearAuthData()),
       catchError(this.handleError)
     );
   }
 
+  clearAuthData(): void {
+    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.refreshTokenKey);
+    localStorage.removeItem(this.userKey);
+    this.currentUserSubject.next(null);
+  }
+
   private handleAuthResponse(response: any): void {
-    console.log('Response:', response);
     if (response) {
       const user = response.user as User;
-      const token = response.session?.access_token;
-      
-      if (token) {
-        localStorage.setItem(this.tokenKey, token);
+      const session = response.session;
+
+      if (session?.access_token) {
+        localStorage.setItem(this.tokenKey, session.access_token);
+        localStorage.setItem(this.refreshTokenKey, session.refresh_token);
         localStorage.setItem(this.userKey, JSON.stringify(user));
+
         this.currentUserSubject.next(user);
       }
     }
@@ -83,14 +88,31 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
+  refreshToken(): Observable<any> {
+    const refreshToken = localStorage.getItem(this.refreshTokenKey);
+    
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token available'));
+    }
+
+    return this.http.post<any>(`${this.apiUrl}/auth/refresh`, { refresh_token: refreshToken }).pipe(
+      tap(response => {
+        if (response?.session?.access_token) {
+          this.handleAuthResponse(response);
+        } else {
+          throw new Error('Invalid refresh token response');
+        }
+      }),
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'An unknown error occurred';
     
     if (error.error instanceof ErrorEvent) {
-      // Client-side error
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Server-side error
       errorMessage = error.error?.detail || `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
     

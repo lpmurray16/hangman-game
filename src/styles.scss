@@ -6,7 +6,7 @@
     --primary: #ff6b6b;
     --secondary: #4ecdc4;
     --accent: #ffe66d;
-    --dark: #f7fff7;
+    --dark: #eaf3ea;
     --light: #1a1a1a;
 
     /* Neobrutalism Specific */
@@ -25,7 +25,7 @@
     --dark-bg: #121212;
     --dark-card: #1e1e1e;
     --dark-border: #ff6b6b;
-    --dark-text: #f7fff7;
+    --dark-text: #f5e7e7;
     --dark-shadow: rgba(255, 244, 224, 0.7); /* Cream shadow for form elements */
 }
 
@@ -111,6 +111,15 @@ button,
     transition: transform 0.1s ease;
     box-shadow: var(--box-shadow);
     text-transform: uppercase;
+}
+
+.btn-sm {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+.btn-xsm {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
 }
 
 button:hover,
@@ -331,18 +340,6 @@ label {
     color: var(--dark-text);
 }
 
-.game-status {
-    font-size: 1.5rem;
-    font-weight: bold;
-    padding: 1rem;
-    border: var(--border-width) solid var(--dark);
-    background-color: var(--secondary);
-    box-shadow: var(--box-shadow);
-    text-align: center;
-    margin-top: 2rem;
-    color: #000000; /* Darker text for better contrast */
-}
-
 .win-status {
     background-color: #2d6a4f;
     color: var(--dark-text);
@@ -351,4 +348,11 @@ label {
 .lose-status {
     background-color: #7f1d1d;
     color: var(--dark-text);
+}
+
+.flex {
+    display: flex;
+}
+.flex-col {
+    flex-direction: column;
 }

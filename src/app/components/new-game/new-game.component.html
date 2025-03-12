@@ -1,0 +1,26 @@
+<div class="card new-game-card">
+  <h2>Create New Game</h2>
+  <p class="mb-2">Enter a word for others to guess!</p>
+  
+  <form [formGroup]="newGameForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="word">Word to Guess</label>
+      <input 
+        type="text" 
+        id="word" 
+        formControlName="word" 
+        placeholder="Enter a word"
+        [ngClass]="{'error': submitted && f['word'].errors}"
+      >
+      <div *ngIf="submitted && f['word'].errors" class="error-message">
+        <span *ngIf="f['word'].errors['required']">Word is required</span>
+        <span *ngIf="f['word'].errors['minlength']">Word must be at least 2 characters</span>
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <button type="submit" class="btn wiggle">Create Game</button>
+      <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+    </div>
+  </form>
+</div>

@@ -1,8 +1,9 @@
-/**
- * Type definitions for the Hangman Game application
- */
+export interface UserCreate {
+  email: string;
+  password: string;
+  username: string;
+}
 
-// User related types
 export interface User {
   id: string;
   username: string;
@@ -10,67 +11,46 @@ export interface User {
   created_at: string;
 }
 
-export interface UserCreate {
-  username: string;
-  email: string;
-  password: string;
-}
-
 export interface UserLogin {
   email: string;
   password: string;
 }
 
-// Game status type
-export type GameStatus = 'active' | 'won' | 'lost';
-
-// Game related types
-export interface Game {
-  id: string;
-  word: string;
-  hint?: string;
-  max_attempts: number;
-  current_attempts: number;
-  guessed_letters: string[];
-  status: GameStatus;
-  created_at: string;
-  created_by: string;
-  is_multiplayer: boolean;
-}
-
-export interface GameCreate {
-  word?: string;
-  hint?: string;
-  max_attempts?: number;
-  is_multiplayer?: boolean;
-}
-
 export interface GameState {
   id: string;
-  word_display: string[];
-  hint?: string;
-  max_attempts: number;
-  current_attempts: number;
+  word: string;
   guessed_letters: string[];
-  status: GameStatus;
-  is_multiplayer: boolean;
-  players?: string[];
-  current_player_turn?: string;
+  attempts_left: number;
+  status: string;
+  wrong_guesses: string[];
+  correct_guesses: string[];
+  created_by: string;
+  created_at: string;
 }
 
-// Request types
-export interface GuessRequest {
+export interface PublicGameState {
+  id: string;
+  masked_word: string;
+  guessed_letters: string[];
+  attempts_left: number;
+  status: string;
+  wrong_guesses: string[];
+  correct_guesses: string[];
+  created_by: string;
+  created_at: string;
+}
+
+export interface PublicGameResponse {
   game_id: string;
+  status: string;
+  created_by: string;
+  created_at: string;
+}
+
+export interface LetterGuess {
   letter: string;
 }
 
-export interface JoinGameRequest {
-  game_id: string;
-}
-
-// Response types
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
+export interface CreateGame {
+  word: string;
 }

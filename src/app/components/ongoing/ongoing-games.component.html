@@ -1,0 +1,18 @@
+<div class="card">
+    <h3>Ongoing Games</h3>
+    <div *ngIf="games.length === 0" class="no-games">
+        <p>No ongoing games available</p>
+    </div>
+    <ul class="games-list" *ngIf="games.length > 0">
+        <li *ngFor="let game of games" class="game-item">
+            <div class="flex flex-col">
+                <span class="game-id">Game #{{ game.game_id }}</span>
+                <span class="game-players">Created By: {{ game.created_by }}</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="game-status" [ngClass]="game.status">{{ game.status }}</span>
+                <button class="btn btn-xsm" [routerLink]="['/game', game.game_id]">View Game</button>
+            </div>
+        </li>
+    </ul>
+</div>

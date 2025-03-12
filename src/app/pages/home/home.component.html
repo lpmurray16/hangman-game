@@ -1,32 +1,24 @@
 <div class="home-container">
-  <div class="card welcome-card">
+  <div class="card welcome-card" *ngIf="!showNewGameForm">
     <h1>Welcome to Hangman!</h1>
-    <p class="mb-3">The classic word guessing game with a neobrutalism twist.</p>
+    <p class="mb-3">The classic word guessing game.</p>
     <div class="game-options">
-      <button class="btn mb-2 wiggle">Start New Game</button>
-      <button class="btn btn-secondary mb-2">Join Multiplayer</button>
-      <button class="btn btn-accent">View Leaderboard</button>
+      <button class="btn mb-2 wiggle" (click)="createNewGame()">Create New Game</button>
+      <button class="btn btn-secondary mb-2">Join Game With ID</button>
     </div>
   </div>
 
-  <div class="card features-card mt-4">
-    <h2>Game Features</h2>
-    <ul class="feature-list">
-      <li>Single player mode with various difficulty levels</li>
-      <li>Multiplayer mode to challenge your friends</li>
-      <li>Custom word creation for personalized games</li>
-      <li>Leaderboard to track your progress</li>
-    </ul>
-  </div>
+  <app-new-game 
+    *ngIf="showNewGameForm" 
+    (gameCreated)="onGameCreated($event)" 
+    (cancel)="onCancelNewGame()">
+  </app-new-game>
 
   <div class="grid mt-4">
     <div class="card">
       <h3>How to Play</h3>
       <p>Guess the hidden word one letter at a time. Each incorrect guess brings you closer to losing!</p>
     </div>
-    <div class="card">
-      <h3>Daily Challenge</h3>
-      <p>Try our daily word challenge and compete with players worldwide.</p>
-    </div>
+    <ongoing-games></ongoing-games>  
   </div>
 </div>
