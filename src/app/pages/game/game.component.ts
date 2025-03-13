@@ -56,7 +56,7 @@ export class GameComponent implements OnInit {
         // Check if current user is the game creator
         this.authService.currentUser.subscribe((user) => {
           if (user && this.game) {
-            this.isGameCreator = user.email === this.game.created_by;
+            this.isGameCreator = user.username === this.game.created_by;
           } else {
             this.isGameCreator = false;
           }
