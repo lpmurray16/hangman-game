@@ -15,10 +15,14 @@ import { PublicGameResponse } from '../../types';
         width: 100%;
         display: flex;
         justify-content: space-between;
+        gap:4px;
         padding: 16px;
         border: var(--border-width) solid var(--primary);
         border-radius: var(--border-radius);
         margin-bottom: 4px;
+        .game-status {
+          margin-bottom: 4px;
+        }
       }
     `,
   ],

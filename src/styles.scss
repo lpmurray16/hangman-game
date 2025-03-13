@@ -3,8 +3,8 @@
 /* Variables */
 :root {
     /* Primary Colors */
-    --primary: #ff6b6b;
-    --secondary: #f8fc3a;
+    --primary: #6d5ce2;
+    --secondary: #fde400;
     --accent: #3bf1a5;
     --dark: #000000;
     --light: #dddddd;
@@ -17,7 +17,7 @@
     --box-shadow: var(--shadow-offset) var(--shadow-offset) 0 0 var(--shadow-color);
 
     /* Typography */
-    --font-family: 'Courier New', monospace;
+    --font-family: "Roboto Mono", monospace;
     --font-size-base: 16px;
     --line-height: 1.5;
     
@@ -105,7 +105,7 @@ button,
     border: var(--border-width) solid var(--dark);
     border-radius: var(--border-radius);
     background-color: var(--primary);
-    color: #000000; /* Darker text for better contrast on primary buttons */
+    color: var(--light); /* Darker text for better contrast on primary buttons */
     cursor: pointer;
     position: relative;
     transition: transform 0.1s ease;

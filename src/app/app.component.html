@@ -1,6 +1,6 @@
 <div class="container">
   <header>
-    <h1>Hangman Game</h1>
+    <h1>Hangman</h1>
     <nav>
       <a routerLink="/home" routerLinkActive="active">Home</a>
       <ng-container *ngIf="!currentUser">
@@ -9,10 +9,10 @@
       </ng-container>
       <ng-container *ngIf="currentUser">
         <div class="user-info">
-          <span class="user-icon">👤</span>
-          <span>{{ currentUser.email }}</span>
+          <i class="fas fa-user"></i>
+          <span>{{ currentUser.username }}</span>
+          <i (click)="logout()" class="fas fa-right-from-bracket logout-btn"></i>
         </div>
-        <a href="javascript:void(0)" (click)="logout()" class="logout-btn">Logout</a>
       </ng-container>
     </nav>
   </header>
@@ -20,8 +20,4 @@
   <main>
     <router-outlet></router-outlet>
   </main>
-
-  <footer>
-    <p>© 2023 Hangman Game - A Neobrutalism Project</p>
-  </footer>
 </div>

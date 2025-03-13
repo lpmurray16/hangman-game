@@ -7,11 +7,12 @@
         <li *ngFor="let game of games" class="game-item">
             <div class="flex flex-col">
                 <span class="game-id">Game #{{ game.game_id }}</span>
-                <span class="game-players">Created By: {{ game.created_by }}</span>
+                <span class="game-players">Created By:</span>
+                <span>{{ game.created_by }}</span>
             </div>
             <div class="flex flex-col flex-between">
                 <span class="game-status" [ngClass]="game.status">{{ game.status }}</span>
-                <button class="btn btn-xsm" [routerLink]="['/game', game.game_id]">View Game</button>
+                <button class="btn btn-secondary btn-xsm" [routerLink]="['/game', game.game_id]">View Game</button>
             </div>
         </li>
     </ul>

@@ -31,7 +31,8 @@
 
         <div class="hints-section">
             <h3>Hints</h3>
-            <ul class="hints-list">
+            <p *ngIf="game.hints.length === 0">No Hints</p>
+            <ul class="hints-list" *ngIf="game.hints.length > 0">
                 <li *ngFor="let hint of game.hints" class="hint-item">
                     <p>{{ hint }}</p>
                 </li>
@@ -48,8 +49,8 @@
             <!-- Word display -->
             <div class="word-display">
                 <div class="word-container">
-                    <div *ngFor="let char of game.masked_word.split('')" class="letter-box">
-                        {{ char === '_' ? '' : char }}
+                    <div class="letter-box">
+                        {{ game.masked_word }}
                     </div>
                 </div>
                 <p *ngIf="game.status === 'won'" class="success-message">Congratulations! You won!</p>

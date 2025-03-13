@@ -8,45 +8,16 @@ import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService implements OnDestroy {
+export class AuthService  {
   private apiUrl = 'http://localhost:8000/auth';
-  private authTokenKey = 'authToken'; // Ensure this matches the interceptor
-  private tokenExpiryKey = 'tokenExpiry';
-  private sessionTimeoutMs = 24 * 60 * 60 * 1000; // 24 hours (extended from 30 minutes)
-  private authState = new BehaviorSubject<boolean>(this.hasValidToken());
-  private tokenCheckInterval: any;
-  private windowEventsSub: Subscription;
+  private authTokenKey = 'authToken';
+  private authState = new BehaviorSubject<boolean>(this.hasToken());
   currentUser = new BehaviorSubject<User | null>(null);
 
   constructor(private http: HttpClient) {
-    // Check token validity periodically
-    this.tokenCheckInterval = setInterval(
-      () => this.checkTokenValidity(),
-      60000
-    ); // Check every minute
-
-    // Clear token on window close/refresh
-    this.windowEventsSub = fromEvent(window, 'beforeunload').subscribe(() => {
-      // Only clear if not "remember me" (implement this feature later if needed)
-      this.clearTokenIfTemporary();
-    });
-
-    // Initialize by checking token validity
-    this.checkTokenValidity();
-
-    // Try to load user data if we have a valid token
-    if (this.hasValidToken()) {
+    // Load user data if we have a token
+    if (this.hasToken()) {
       this.loadUserData();
-    }
-  }
-
-  ngOnDestroy(): void {
-    // Clean up resources
-    if (this.tokenCheckInterval) {
-      clearInterval(this.tokenCheckInterval);
-    }
-    if (this.windowEventsSub) {
-      this.windowEventsSub.unsubscribe();
     }
   }
 
@@ -54,52 +25,9 @@ export class AuthService implements OnDestroy {
     return !!localStorage.getItem(this.authTokenKey);
   }
 
-  private hasValidToken(): boolean {
-    if (!this.hasToken()) return false;
-
-    const expiryStr = localStorage.getItem(this.tokenExpiryKey);
-    if (!expiryStr) {
-      // If we have a token but no expiry, clean up and return false
-      this.clearToken();
-      return false;
-    }
-
-    const expiry = new Date(expiryStr).getTime();
-    const now = new Date().getTime();
-
-    if (now >= expiry) {
-      // Token expired, clean up
-      this.clearToken();
-      return false;
-    }
-
-    return true;
-  }
-
-  private checkTokenValidity(): void {
-    const wasAuthenticated = this.authState.value;
-    const isNowAuthenticated = this.hasValidToken();
-
-    // Update auth state if changed
-    if (wasAuthenticated !== isNowAuthenticated) {
-      this.authState.next(isNowAuthenticated);
-
-      // If no longer authenticated, clear user
-      if (!isNowAuthenticated) {
-        this.currentUser.next(null);
-      }
-    }
-  }
-
   private clearToken(): void {
     localStorage.removeItem(this.authTokenKey);
-    localStorage.removeItem(this.tokenExpiryKey);
-  }
-
-  private clearTokenIfTemporary(): void {
-    // Don't clear token on window close/refresh anymore
-    // This allows the user to stay logged in between sessions
-    // The token will still expire based on the sessionTimeoutMs value
+    localStorage.removeItem('currentUser');
   }
 
   isAuthenticated(): Observable<boolean> {
@@ -113,22 +41,36 @@ export class AuthService implements OnDestroy {
   login(user: UserLogin): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, user).pipe(
       tap((response) => {
-        console.log('Login response:', response);
-        if (response.session.access_token) {
+        if (response && response.session) {
           // Store token
-          localStorage.setItem(
-            this.authTokenKey,
-            response.session.access_token
-          );
+          const token = response.session.access_token;
+          if (token.length > 0) {
+            localStorage.setItem(this.authTokenKey, token);
+          } else {
+            console.error('Invalid token format:', token);
+          }
 
-          // Set token expiry (current time + session timeout)
-          const expiryTime = new Date(
-            new Date().getTime() + this.sessionTimeoutMs
-          );
-          localStorage.setItem(this.tokenExpiryKey, expiryTime.toISOString());
+          // Extract username from user_metadata if available
+          const username = response.user?.user_metadata?.username || 'User';
 
-          this.currentUser.next(response.user);
+          // Create a proper User object
+          const userData: User = {
+            id: response.user.id,
+            email: response.user.email,
+            username: username,
+            created_at: response.user.created_at,
+          };
+
+          // Store user data in localStorage
+          localStorage.setItem('currentUser', JSON.stringify(userData));
+
+          this.currentUser.next(userData);
           this.authState.next(true);
+        } else {
+          console.error(
+            'Token not found in response. Response structure:',
+            Object.keys(response)
+          );
         }
       })
     );
@@ -136,41 +78,31 @@ export class AuthService implements OnDestroy {
 
   logout(): Observable<any> {
     const authToken = this.getToken();
-    const headers = authToken ? new HttpHeaders({ Authorization: `Bearer ${authToken}` }) : undefined;
-  
-    return this.http
-      .post<any>(`${this.apiUrl}/logout`, {}, { headers })
-      .pipe(
-        tap(() => {
-          this.clearToken();
-          this.currentUser.next(null);
-          this.authState.next(false);
-        })
-      );
+    const headers = authToken
+      ? new HttpHeaders({ Authorization: `Bearer ${authToken}` })
+      : undefined;
+
+    return this.http.post<any>(`${this.apiUrl}/logout`, {}, { headers }).pipe(
+      tap(() => {
+        this.clearToken();
+        this.currentUser.next(null);
+        this.authState.next(false);
+      })
+    );
   }
 
   getToken(): string | null {
-    // Only return token if it's valid
-    return this.hasValidToken()
-      ? localStorage.getItem(this.authTokenKey)
-      : null;
+    return localStorage.getItem(this.authTokenKey);
   }
 
-  // Add method to load user data if token exists
   private loadUserData(): void {
-    // If we have a valid token but no user data, we could fetch it here
-    // This would require an endpoint on your backend
-    this.http.get<{ user: User }>(`${this.apiUrl}/me`).subscribe({
-      next: (response) => {
-        if (response && response.user) {
-          this.currentUser.next(response.user);
-        }
-      },
-      error: () => {
-        // If we can't load the user data, clear the token
-        this.clearToken();
-        this.authState.next(false);
-      },
-    });
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      this.currentUser.next(JSON.parse(storedUser));
+      this.authState.next(true);
+    } else {
+      this.authState.next(false);
+      this.clearToken();
+    }
   }
 }
