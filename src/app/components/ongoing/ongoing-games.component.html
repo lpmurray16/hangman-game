@@ -9,7 +9,7 @@
                 <span class="game-id">Game #{{ game.game_id }}</span>
                 <span class="game-players">Created By: {{ game.created_by }}</span>
             </div>
-            <div class="flex flex-col">
+            <div class="flex flex-col flex-between">
                 <span class="game-status" [ngClass]="game.status">{{ game.status }}</span>
                 <button class="btn btn-xsm" [routerLink]="['/game', game.game_id]">View Game</button>
             </div>

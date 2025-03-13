@@ -1,54 +1,33 @@
-import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
-import { catchError, switchMap, throwError } from 'rxjs';
-import { Router } from '@angular/router';
 
-export const AuthInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown>, next: HttpHandlerFn) => {
+export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
   const authService = inject(AuthService);
-  const router = inject(Router);
+  const authToken = authService.getToken();
+  const isAuthRequest = req.url.includes('/auth/login') || req.url.includes('/auth/register') || req.url.includes('/auth/logout');
 
-  // Skip adding token for auth-related endpoints
-  if (request.url.includes('/auth/login') || 
-      request.url.includes('/auth/register') || 
-      request.url.includes('/auth/refresh') || 
-      request.url.includes('/auth/logout')) {
-    return next(request);
-  }
-
-  const authToken = authService.getAuthToken();
-
-  if (authToken) {
-    const authReq = request.clone({
-      headers: request.headers.set('Authorization', `Bearer ${authToken}`)
+  let modifiedReq = req;
+  
+  // Attach Authorization header if token exists and request is not an auth endpoint
+  if (authToken && !isAuthRequest) {
+    modifiedReq = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${authToken}`,
+      },
     });
-
-    return next(authReq).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 401) {
-          // Attempt to refresh the token
-          return authService.refreshToken().pipe(
-            switchMap(() => {
-              const newToken = authService.getAuthToken();
-              const retryReq = request.clone({
-                headers: request.headers.set('Authorization', `Bearer ${newToken}`)
-              });
-              return next(retryReq);
-            }),
-            catchError((refreshError) => {
-              // Refresh failed, log out and redirect
-              authService.clearAuthData();
-              router.navigate(['/login'], { 
-                queryParams: { message: 'Your session has expired. Please log in again.' } 
-              });
-              return throwError(() => refreshError);
-            })
-          );
-        }
-        return throwError(() => error);
-      })
-    );
   }
 
-  return next(request);
+  return next(modifiedReq).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401) {
+        // Auto logout on unauthorized response
+        authService.logout().subscribe();
+      }
+      return throwError(() => error);
+    })
+  );
 };

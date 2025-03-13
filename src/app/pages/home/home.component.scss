@@ -1,10 +1,10 @@
 .home-container {
-  max-width: 800px;
+  max-width: 930px;
   margin: 0 auto;
 }
 
 .welcome-card {
-  background-color: var(--light);
+  background-color: var(--dark-card);
   border-width: calc(var(--border-width) * 1.5);
   text-align: center;
 }

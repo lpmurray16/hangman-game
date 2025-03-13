@@ -1,0 +1,81 @@
+<div class="game-container">
+    <!-- Loading state -->
+    <div *ngIf="loading" class="loading">
+        <p>Loading game...</p>
+    </div>
+
+    <!-- Error message -->
+    <div *ngIf="error" class="error-message">
+        <p>{{ error }}</p>
+    </div>
+
+    <!-- Game content -->
+    <div *ngIf="!loading && !error && game" class="game-content">
+        <div class="game-header">
+            <h2>Hangman Game #{{ gameId }}</h2>
+            <div class="game-info">
+                <p>Status: {{ game.status }}</p>
+                <p>Attempts left: {{ game.attempts_left }}</p>
+            </div>
+        </div>
+
+        <!-- Add Hint Input (only visible to game creator) -->
+        <div *ngIf="isGameCreator && game.status === 'in_progress'" class="card">
+            <div class="form-group flex flex-col">
+                <label for="hint">Add Hint:</label>
+                <input type="text" id="hint" [formControl]="hintControl" class="hint-input"
+                    placeholder="Enter a hint for players...">
+                <button class="btn" (click)="addHint()">Add Hint</button>
+            </div>
+        </div>
+
+        <div class="hints-section">
+            <h3>Hints</h3>
+            <ul class="hints-list">
+                <li *ngFor="let hint of game.hints" class="hint-item">
+                    <p>{{ hint }}</p>
+                </li>
+            </ul>
+        </div>
+        <!--------------------------------------------------------------->
+
+        <div class="game-board">
+            <!-- Hangman image -->
+            <div class="hangman-display">
+                <img [src]="getHangmanImage()" alt="Hangman" class="hangman-image">
+            </div>
+
+            <!-- Word display -->
+            <div class="word-display">
+                <div class="word-container">
+                    <div *ngFor="let char of game.masked_word.split('')" class="letter-box">
+                        {{ char === '_' ? '' : char }}
+                    </div>
+                </div>
+                <p *ngIf="game.status === 'won'" class="success-message">Congratulations! You won!</p>
+                <p *ngIf="game.status === 'lost'" class="error-message">Game over! Better luck next time.</p>
+            </div>
+        </div>
+
+        <!-- Incorrect Guesses -->
+        <div class="incorrect-guesses">
+            <h3>INCORRECT GUESSES</h3>
+            <div class="guesses-container">
+                <span *ngFor="let letter of game.wrong_guesses" class="wrong-letter">{{ letter }}</span>
+                <span *ngIf="game.wrong_guesses.length === 0">No incorrect guesses yet</span>
+            </div>
+        </div>
+
+        <!-- Keyboard -->
+        <div class="game-controls">
+            <div class="keyboard">
+                <button *ngFor="let letter of alphabet" class="letter-btn" [class.guessed]="isLetterGuessed(letter)"
+                    [class.correct]="isLetterCorrect(letter)" [class.incorrect]="isLetterIncorrect(letter)"
+                    [disabled]="isLetterGuessed(letter) || game.status !== 'in_progress' || guessInProgress"
+                    (click)="guessLetter(letter)">
+                    {{ letter }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

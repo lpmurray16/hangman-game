@@ -1,33 +1,54 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { CreateGame, GameState, PublicGameResponse, PublicGameState } from '../types';
+import { Observable, Subject } from 'rxjs';
+import {
+  CreateGame,
+  GameState,
+  HintRequest,
+  LetterGuess,
+  PublicGameResponse,
+  PublicGameState,
+} from '../types';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GameService {
-  private readonly baseUrl = environment.backend_api_url;
+  private apiUrl = 'http://localhost:8000';
+  newGameCreatedTrigger = new Subject<void>();
 
   constructor(private http: HttpClient) {}
 
-  createGame(
-    gameData: CreateGame
-  ): Observable<GameState> {
-    return this.http.post<GameState>(
-      `${this.baseUrl}/games`,
-      gameData
-    );
-  }
-
-  getGame(gameId: string): Observable<PublicGameState> {
-    return this.http.get<PublicGameState>(
-      `${this.baseUrl}/games/${gameId}`
-    );
-  }
-
   getPublicGames(): Observable<PublicGameResponse[]> {
-    return this.http.get<PublicGameResponse[]>(`${this.baseUrl}/games/public`);
+    return this.http.get<PublicGameResponse[]>(`${this.apiUrl}/games/public`);
+  }
+
+  getGameById(gameId: string): Observable<PublicGameState> {
+    return this.http.get<PublicGameState>(`${this.apiUrl}/games/${gameId}`);
+  }
+
+  createGame(game: CreateGame): Observable<GameState> {
+    return this.http.post<GameState>(`${this.apiUrl}/games`, game);
+  }
+
+  guessLetter(gameId: string, guess: LetterGuess): Observable<PublicGameState> {
+    return this.http.post<PublicGameState>(
+      `${this.apiUrl}/games/${gameId}/guess`,
+      guess
+    );
+  }
+
+  logout(): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/auth/logout`,
+      {}
+    );
+  }
+
+  addHint(gameId: string, hint: HintRequest): Observable<PublicGameState> {
+    return this.http.post<PublicGameState>(
+      `${this.apiUrl}/games/${gameId}/addhint`,
+      hint
+    );
   }
 }

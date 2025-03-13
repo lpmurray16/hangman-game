@@ -29,22 +29,57 @@
   align-items: center;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
-  
+
   h2 {
     margin: 0;
   }
-  
+
   .game-info {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
-    
+
     p {
       margin: 0;
       padding: 0.25rem 0.5rem;
-      background-color: #f0f0f0;
+      background-color: var(--dark-card);
       border: 1px solid #ddd;
       border-radius: 4px;
+    }
+  }
+}
+
+/* Hint container styling */
+.hint-container {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--dark-card);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  color: var(--light);
+
+  .form-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    label {
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .hint-input {
+      flex: 1;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+
+      &:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      }
     }
   }
 }
@@ -54,27 +89,27 @@
   gap: 2rem;
   margin-bottom: 2rem;
   flex-wrap: wrap;
-  
+
   .hangman-display {
     flex: 1;
     min-width: 200px;
     display: flex;
     justify-content: center;
-    
+
     .hangman-image {
       max-width: 100%;
       height: auto;
       max-height: 250px;
     }
   }
-  
+
   .word-display {
     flex: 2;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    
+
     .word-container {
       display: flex;
       gap: 0.5rem;
@@ -82,7 +117,7 @@
       flex-wrap: wrap;
       justify-content: center;
     }
-    
+
     .letter-box {
       width: 2rem;
       height: 2.5rem;
@@ -94,7 +129,7 @@
       font-weight: bold;
       text-transform: uppercase;
     }
-    
+
     .hint {
       font-style: italic;
       margin-top: 1rem;
@@ -102,14 +137,24 @@
   }
 }
 
+.incorrect-guesses {
+  margin-bottom: 1.5rem;
+
+  .wrong-letter {
+    margin-right: 6px;
+    font-size: 18px;
+    text-transform: uppercase;
+  }
+}
+
 .game-controls {
   .keyboard {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.6rem;
     justify-content: center;
     margin-bottom: 1.5rem;
-    
+
     .letter-btn {
       width: 2.5rem;
       height: 2.5rem;
@@ -117,35 +162,36 @@
       font-weight: bold;
       text-transform: uppercase;
       border: 2px solid #000;
-      background-color: #fff;
+      background-color: var(--secondary);
       cursor: pointer;
       transition: all 0.2s;
-      
+      text-align: center;
+
       &:hover:not(:disabled) {
         transform: translateY(-2px);
         box-shadow: 0 4px 0 #000;
       }
-      
+
       &:active:not(:disabled) {
         transform: translateY(0);
         box-shadow: 0 2px 0 #000;
       }
-      
+
       &:disabled {
         cursor: not-allowed;
         opacity: 0.7;
       }
-      
+
       &.guessed {
         border-color: #999;
       }
-      
+
       &.correct {
         background-color: #d4edda;
         border-color: #28a745;
         color: #28a745;
       }
-      
+
       &.incorrect {
         background-color: #f8d7da;
         border-color: #dc3545;
@@ -153,45 +199,45 @@
       }
     }
   }
-  
+
   .game-result {
     text-align: center;
     margin: 2rem 0;
-    
+
     h3 {
       font-size: 1.8rem;
       margin-bottom: 1rem;
     }
-    
+
     button {
       margin: 0.5rem;
     }
   }
-  
+
   .multiplayer-info {
     margin-top: 2rem;
     padding: 1rem;
     border: 2px solid #000;
     background-color: #f8f9fa;
-    
+
     h4 {
       margin-top: 0;
       margin-bottom: 0.5rem;
     }
-    
+
     .players-list {
       list-style-type: none;
       padding: 0;
       margin: 0;
-      
+
       li {
         padding: 0.5rem;
         border-bottom: 1px solid #ddd;
-        
+
         &:last-child {
           border-bottom: none;
         }
-        
+
         &.current-turn {
           font-weight: bold;
           background-color: #e6f7ff;
@@ -204,13 +250,13 @@
 @media (max-width: 768px) {
   .game-board {
     flex-direction: column;
-    
+
     .hangman-display,
     .word-display {
       flex: auto;
     }
   }
-  
+
   .game-header {
     flex-direction: column;
     align-items: flex-start;

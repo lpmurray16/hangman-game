@@ -5,32 +5,36 @@ import { RouterModule } from '@angular/router';
 import { PublicGameResponse } from '../../types';
 
 @Component({
-    selector: 'ongoing-games',
-    templateUrl: 'ongoing-games.component.html',
-    standalone: true,
-    imports: [CommonModule, RouterModule],
-    styles: [
-        `
-        .game-item {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 8px;
-            border: var(--border-width) solid var(--primary);
-            border-radius: var(--border-radius);
-            margin-bottom: 4px;
-        }
-        `,
-    ],
+  selector: 'ongoing-games',
+  templateUrl: 'ongoing-games.component.html',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  styles: [
+    `
+      .game-item {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 16px;
+        border: var(--border-width) solid var(--primary);
+        border-radius: var(--border-radius);
+        margin-bottom: 4px;
+      }
+    `,
+  ],
 })
-
 export class OnGoingGamesComponent implements OnInit {
-    games: PublicGameResponse[] = [];
-    constructor(private gameService: GameService) {}
+  games: PublicGameResponse[] = [];
+  constructor(private gameService: GameService) {}
 
-    ngOnInit() {
-        this.gameService.getPublicGames().subscribe(games => {
-            this.games = games || [];
-        });
-    }
+  ngOnInit() {
+    this.gameService.getPublicGames().subscribe((games) => {
+      this.games = games || [];
+    });
+    this.gameService.newGameCreatedTrigger.subscribe(() => {
+      this.gameService.getPublicGames().subscribe((games) => {
+        this.games = games || [];
+      });
+    });
+  }
 }

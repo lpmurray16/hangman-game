@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateGame } from '../../types';
+import { GameService } from '../../services/game.service';
 
 @Component({
   selector: 'app-new-game',
@@ -17,7 +18,7 @@ export class NewGameComponent {
   newGameForm: FormGroup;
   submitted = false;
   
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private gameService: GameService) {
     this.newGameForm = this.fb.group({
       word: ['', [Validators.required, Validators.minLength(2)]],
     });
@@ -37,6 +38,7 @@ export class NewGameComponent {
     };
     
     this.gameCreated.emit(gameData);
+    this.gameService.newGameCreatedTrigger.next();
   }
   
   onCancel() {

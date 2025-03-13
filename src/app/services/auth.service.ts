@@ -1,121 +1,176 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, BehaviorSubject } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { Injectable, OnDestroy } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, BehaviorSubject, fromEvent, Subscription } from 'rxjs';
+import { tap, filter } from 'rxjs/operators';
 import { User, UserCreate, UserLogin } from '../types';
 import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class AuthService {
-  private apiUrl = environment.backend_api_url;
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
-  public currentUser$ = this.currentUserSubject.asObservable();
-  private tokenKey = 'auth_token';
-  private refreshTokenKey = 'refresh_token';
-  private userKey = 'user_data';
+export class AuthService implements OnDestroy {
+  private apiUrl = 'http://localhost:8000/auth';
+  private authTokenKey = 'authToken'; // Ensure this matches the interceptor
+  private tokenExpiryKey = 'tokenExpiry';
+  private sessionTimeoutMs = 24 * 60 * 60 * 1000; // 24 hours (extended from 30 minutes)
+  private authState = new BehaviorSubject<boolean>(this.hasValidToken());
+  private tokenCheckInterval: any;
+  private windowEventsSub: Subscription;
+  currentUser = new BehaviorSubject<User | null>(null);
 
   constructor(private http: HttpClient) {
-    this.loadStoredUser();
+    // Check token validity periodically
+    this.tokenCheckInterval = setInterval(
+      () => this.checkTokenValidity(),
+      60000
+    ); // Check every minute
+
+    // Clear token on window close/refresh
+    this.windowEventsSub = fromEvent(window, 'beforeunload').subscribe(() => {
+      // Only clear if not "remember me" (implement this feature later if needed)
+      this.clearTokenIfTemporary();
+    });
+
+    // Initialize by checking token validity
+    this.checkTokenValidity();
+
+    // Try to load user data if we have a valid token
+    if (this.hasValidToken()) {
+      this.loadUserData();
+    }
   }
 
-  private loadStoredUser(): void {
-    const storedToken = localStorage.getItem(this.tokenKey);
-    const storedUser = localStorage.getItem(this.userKey);
+  ngOnDestroy(): void {
+    // Clean up resources
+    if (this.tokenCheckInterval) {
+      clearInterval(this.tokenCheckInterval);
+    }
+    if (this.windowEventsSub) {
+      this.windowEventsSub.unsubscribe();
+    }
+  }
 
-    if (storedToken && storedUser) {
-      try {
-        this.currentUserSubject.next(JSON.parse(storedUser));
-      } catch (e) {
-        this.clearAuthData();
+  private hasToken(): boolean {
+    return !!localStorage.getItem(this.authTokenKey);
+  }
+
+  private hasValidToken(): boolean {
+    if (!this.hasToken()) return false;
+
+    const expiryStr = localStorage.getItem(this.tokenExpiryKey);
+    if (!expiryStr) {
+      // If we have a token but no expiry, clean up and return false
+      this.clearToken();
+      return false;
+    }
+
+    const expiry = new Date(expiryStr).getTime();
+    const now = new Date().getTime();
+
+    if (now >= expiry) {
+      // Token expired, clean up
+      this.clearToken();
+      return false;
+    }
+
+    return true;
+  }
+
+  private checkTokenValidity(): void {
+    const wasAuthenticated = this.authState.value;
+    const isNowAuthenticated = this.hasValidToken();
+
+    // Update auth state if changed
+    if (wasAuthenticated !== isNowAuthenticated) {
+      this.authState.next(isNowAuthenticated);
+
+      // If no longer authenticated, clear user
+      if (!isNowAuthenticated) {
+        this.currentUser.next(null);
       }
     }
   }
 
-  register(user: UserCreate): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/auth/register`, user).pipe(
-      tap(response => this.handleAuthResponse(response)),
-      catchError(this.handleError)
-    );
+  private clearToken(): void {
+    localStorage.removeItem(this.authTokenKey);
+    localStorage.removeItem(this.tokenExpiryKey);
   }
 
-  login(credentials: UserLogin): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/auth/login`, credentials).pipe(
-      tap(response => this.handleAuthResponse(response)),
-      catchError(this.handleError)
+  private clearTokenIfTemporary(): void {
+    // Don't clear token on window close/refresh anymore
+    // This allows the user to stay logged in between sessions
+    // The token will still expire based on the sessionTimeoutMs value
+  }
+
+  isAuthenticated(): Observable<boolean> {
+    return this.authState.asObservable();
+  }
+
+  register(user: UserCreate): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, user);
+  }
+
+  login(user: UserLogin): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/login`, user).pipe(
+      tap((response) => {
+        console.log('Login response:', response);
+        if (response.session.access_token) {
+          // Store token
+          localStorage.setItem(
+            this.authTokenKey,
+            response.session.access_token
+          );
+
+          // Set token expiry (current time + session timeout)
+          const expiryTime = new Date(
+            new Date().getTime() + this.sessionTimeoutMs
+          );
+          localStorage.setItem(this.tokenExpiryKey, expiryTime.toISOString());
+
+          this.currentUser.next(response.user);
+          this.authState.next(true);
+        }
+      })
     );
   }
 
   logout(): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/auth/logout`, {}).pipe(
-      tap(() => this.clearAuthData()),
-      catchError(this.handleError)
-    );
+    const authToken = this.getToken();
+    const headers = authToken ? new HttpHeaders({ Authorization: `Bearer ${authToken}` }) : undefined;
+  
+    return this.http
+      .post<any>(`${this.apiUrl}/logout`, {}, { headers })
+      .pipe(
+        tap(() => {
+          this.clearToken();
+          this.currentUser.next(null);
+          this.authState.next(false);
+        })
+      );
   }
 
-  clearAuthData(): void {
-    localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.refreshTokenKey);
-    localStorage.removeItem(this.userKey);
-    this.currentUserSubject.next(null);
+  getToken(): string | null {
+    // Only return token if it's valid
+    return this.hasValidToken()
+      ? localStorage.getItem(this.authTokenKey)
+      : null;
   }
 
-  private handleAuthResponse(response: any): void {
-    if (response) {
-      const user = response.user as User;
-      const session = response.session;
-
-      if (session?.access_token) {
-        localStorage.setItem(this.tokenKey, session.access_token);
-        localStorage.setItem(this.refreshTokenKey, session.refresh_token);
-        localStorage.setItem(this.userKey, JSON.stringify(user));
-
-        this.currentUserSubject.next(user);
-      }
-    }
-  }
-
-  isAuthenticated(): boolean {
-    return !!localStorage.getItem(this.tokenKey);
-  }
-
-  getCurrentUser(): User | null {
-    return this.currentUserSubject.value;
-  }
-
-  getAuthToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
-  }
-
-  refreshToken(): Observable<any> {
-    const refreshToken = localStorage.getItem(this.refreshTokenKey);
-    
-    if (!refreshToken) {
-      return throwError(() => new Error('No refresh token available'));
-    }
-
-    return this.http.post<any>(`${this.apiUrl}/auth/refresh`, { refresh_token: refreshToken }).pipe(
-      tap(response => {
-        if (response?.session?.access_token) {
-          this.handleAuthResponse(response);
-        } else {
-          throw new Error('Invalid refresh token response');
+  // Add method to load user data if token exists
+  private loadUserData(): void {
+    // If we have a valid token but no user data, we could fetch it here
+    // This would require an endpoint on your backend
+    this.http.get<{ user: User }>(`${this.apiUrl}/me`).subscribe({
+      next: (response) => {
+        if (response && response.user) {
+          this.currentUser.next(response.user);
         }
-      }),
-      catchError(this.handleError)
-    );
-  }
-
-  private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'An unknown error occurred';
-    
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      errorMessage = error.error?.detail || `Error Code: ${error.status}\nMessage: ${error.message}`;
-    }
-    
-    return throwError(() => new Error(errorMessage));
+      },
+      error: () => {
+        // If we can't load the user data, clear the token
+        this.clearToken();
+        this.authState.next(false);
+      },
+    });
   }
 }

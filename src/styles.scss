@@ -4,13 +4,13 @@
 :root {
     /* Primary Colors */
     --primary: #ff6b6b;
-    --secondary: #4ecdc4;
-    --accent: #ffe66d;
-    --dark: #eaf3ea;
-    --light: #1a1a1a;
+    --secondary: #f8fc3a;
+    --accent: #3bf1a5;
+    --dark: #000000;
+    --light: #dddddd;
 
     /* Neobrutalism Specific */
-    --shadow-color: rgba(255, 244, 224, 0.9); /* Cream color for box shadow */
+    --shadow-color: rgba(0, 0, 0, 0.9); /* Cream color for box shadow */
     --border-width: 3px;
     --border-radius: 4px;
     --shadow-offset: 5px;
@@ -22,8 +22,8 @@
     --line-height: 1.5;
     
     /* Dark Theme Colors */
-    --dark-bg: #121212;
-    --dark-card: #1e1e1e;
+    --dark-bg: #1f1f1f;
+    --dark-card: #1b1b1b;
     --dark-border: #ff6b6b;
     --dark-text: #f5e7e7;
     --dark-shadow: rgba(255, 244, 224, 0.7); /* Cream shadow for form elements */
@@ -195,7 +195,7 @@ label {
 
 /* Containers */
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 1rem;
 }
@@ -287,41 +287,6 @@ label {
     gap: 0.5rem;
 }
 
-.letter-btn {
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 1.2rem;
-    border: var(--border-width) solid var(--dark-border);
-    background-color: var(--dark-card);
-    color: var(--dark-text);
-    box-shadow: 3px 3px 0 0 var(--dark-shadow);
-    cursor: pointer;
-    transition: all 0.1s ease;
-}
-
-.letter-btn:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 5px 5px 0 0 var(--shadow-color);
-    color: var(--accent); /* Higher contrast on hover */
-}
-
-.letter-btn:active {
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0 0 var(--shadow-color);
-}
-
-.letter-btn.used {
-    background-color: #333333;
-    color: #666666;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
 .word-display {
     display: flex;
     gap: 0.5rem;
@@ -355,4 +320,7 @@ label {
 }
 .flex-col {
     flex-direction: column;
+}
+.flex-between {
+    justify-content: space-between;
 }
