@@ -9,12 +9,13 @@ import {
   PublicGameResponse,
   PublicGameState,
 } from '../types';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GameService {
-  private apiUrl = 'http://localhost:8000';
+  private apiUrl = environment.backend_api_url;
   newGameCreatedTrigger = new Subject<void>();
 
   constructor(private http: HttpClient) {}

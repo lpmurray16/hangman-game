@@ -1,7 +1,7 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject, fromEvent, Subscription } from 'rxjs';
-import { tap, filter } from 'rxjs/operators';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { User, UserCreate, UserLogin } from '../types';
 import { environment } from '../../environments/environment';
 
@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class AuthService  {
-  private apiUrl = 'http://localhost:8000/auth';
+  private apiUrl = environment.backend_api_url + '/auth';
   private authTokenKey = 'authToken';
   private authState = new BehaviorSubject<boolean>(this.hasToken());
   currentUser = new BehaviorSubject<User | null>(null);
