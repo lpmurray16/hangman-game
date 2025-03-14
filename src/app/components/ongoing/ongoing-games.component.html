@@ -6,9 +6,9 @@
     <ul class="games-list" *ngIf="games.length > 0">
         <li *ngFor="let game of games" class="game-item">
             <div class="flex flex-col">
-                <span class="game-id">Game #{{ game.game_id }}</span>
+                <span class="game-id">Game #<strong>{{ game.game_id }}</strong></span>
                 <span class="game-players">Created By:</span>
-                <span>{{ game.created_by }}</span>
+                <strong>{{ game.created_by }}</strong>
             </div>
             <div class="flex flex-col flex-between">
                 <span class="game-status" [ngClass]="game.status">{{ game.status }}</span>
