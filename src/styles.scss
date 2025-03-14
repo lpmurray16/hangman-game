@@ -10,7 +10,8 @@
     --light: #dddddd;
 
     /* Neobrutalism Specific */
-    --shadow-color: rgba(0, 0, 0, 0.9); /* Cream color for box shadow */
+    --shadow-color: rgba(0, 0, 0, 0.9);
+    /* Cream color for box shadow */
     --border-width: 3px;
     --border-radius: 0px;
     --shadow-offset: 5px;
@@ -20,13 +21,14 @@
     --font-family: "Roboto Mono", monospace;
     --font-size-base: 16px;
     --line-height: 1.5;
-    
+
     /* Dark Theme Colors */
     --dark-bg: #ffe5b4;
     --dark-card: #f1f1f1;
     --dark-border: #000000;
     --dark-text: #000000;
-    --dark-shadow: rgba(255, 244, 224, 0.7); /* Cream shadow for form elements */
+    --dark-shadow: rgba(255, 244, 224, 0.7);
+    /* Cream shadow for form elements */
 }
 
 /* Reset & Base Styles */
@@ -61,7 +63,10 @@ h6 {
 
 h1::after,
 h2::after,
-h3::after {
+h3::after,
+h4::after,
+h5::after,
+h6::after {
     content: '';
     position: absolute;
     bottom: -5px;
@@ -69,7 +74,6 @@ h3::after {
     width: 100%;
     height: 5px;
     background-color: var(--accent);
-    z-index: -1;
 }
 
 /* Links */
@@ -105,7 +109,8 @@ button,
     border: var(--border-width) solid var(--dark);
     border-radius: var(--border-radius);
     background-color: var(--primary);
-    color: var(--light); /* Darker text for better contrast on primary buttons */
+    color: var(--light);
+    /* Darker text for better contrast on primary buttons */
     cursor: pointer;
     position: relative;
     transition: transform 0.1s ease;
@@ -117,6 +122,7 @@ button,
     font-size: 0.9rem;
     padding: 0.5rem 1rem;
 }
+
 .btn-xsm {
     font-size: 0.7rem;
     padding: 0.25rem 0.5rem;
@@ -136,12 +142,14 @@ button:active,
 
 .btn-secondary {
     background-color: var(--secondary);
-    color: #000000; /* Darker text for better contrast */
+    color: #000000;
+    /* Darker text for better contrast */
 }
 
 .btn-accent {
     background-color: var(--accent);
-    color: #000000; /* Darker text for better contrast */
+    color: #000000;
+    /* Darker text for better contrast */
 }
 
 /* Cards */
@@ -313,9 +321,11 @@ label {
 .flex {
     display: flex;
 }
+
 .flex-col {
     flex-direction: column;
 }
+
 .flex-between {
     justify-content: space-between;
 }
