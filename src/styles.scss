@@ -3,16 +3,16 @@
 /* Variables */
 :root {
     /* Primary Colors */
-    --primary: #6d5ce2;
+    --primary: #ff90e8;
     --secondary: #fde400;
-    --accent: #3bf1a5;
+    --accent: #90e8ff;
     --dark: #000000;
     --light: #dddddd;
 
     /* Neobrutalism Specific */
     --shadow-color: rgba(0, 0, 0, 0.9); /* Cream color for box shadow */
     --border-width: 3px;
-    --border-radius: 4px;
+    --border-radius: 0px;
     --shadow-offset: 5px;
     --box-shadow: var(--shadow-offset) var(--shadow-offset) 0 0 var(--shadow-color);
 
@@ -22,10 +22,10 @@
     --line-height: 1.5;
     
     /* Dark Theme Colors */
-    --dark-bg: #1f1f1f;
-    --dark-card: #1b1b1b;
-    --dark-border: #ff6b6b;
-    --dark-text: #f5e7e7;
+    --dark-bg: #ffe5b4;
+    --dark-card: #f1f1f1;
+    --dark-border: #000000;
+    --dark-text: #000000;
     --dark-shadow: rgba(255, 244, 224, 0.7); /* Cream shadow for form elements */
 }
 
