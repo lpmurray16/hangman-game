@@ -14,8 +14,9 @@
     /* Cream color for box shadow */
     --border-width: 3px;
     --border-radius: 0px;
-    --shadow-offset: 5px;
-    --box-shadow: var(--shadow-offset) var(--shadow-offset) 0 0 var(--shadow-color);
+    --shadow-offset-x: 6px;
+    --shadow-offset-y: 7px;
+    --box-shadow: var(--shadow-offset-x) var(--shadow-offset-y) 0 0 var(--shadow-color);
 
     /* Typography */
     --font-family: "Roboto Mono", monospace;
