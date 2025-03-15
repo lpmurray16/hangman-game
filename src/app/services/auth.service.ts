@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 import { User, UserCreate, UserLogin } from '../types';
 import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService  {
+export class AuthService {
   private apiUrl = environment.backend_api_url + '/auth';
   private authTokenKey = 'authToken';
   private authState = new BehaviorSubject<boolean>(this.hasToken());
@@ -28,6 +28,12 @@ export class AuthService  {
   private clearToken(): void {
     localStorage.removeItem(this.authTokenKey);
     localStorage.removeItem('currentUser');
+  }
+
+  forceLogout(): void {
+    this.clearToken();
+    this.currentUser.next(null);
+    this.authState.next(false);
   }
 
   isAuthenticated(): Observable<boolean> {
@@ -87,12 +93,22 @@ export class AuthService  {
         this.clearToken();
         this.currentUser.next(null);
         this.authState.next(false);
+      }),
+      catchError((error) => {
+        // Even if the API call fails, we still want to log out locally
+        console.log('Logout API call failed, forcing local logout');
+        this.forceLogout();
+        return throwError(() => error);
       })
     );
   }
 
   getToken(): string | null {
     return localStorage.getItem(this.authTokenKey);
+  }
+
+  setAuthState(state: boolean): void {
+    this.authState.next(state);
   }
 
   private loadUserData(): void {

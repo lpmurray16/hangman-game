@@ -9,6 +9,7 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import { Router } from '@angular/router';
 
 export const authInterceptor: HttpInterceptorFn = (
   req: HttpRequest<any>,
@@ -34,7 +35,14 @@ export const authInterceptor: HttpInterceptorFn = (
   return next(modifiedReq).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
-        authService.logout().subscribe();
+        // Force logout and clear localStorage when token is invalid
+        const router = inject(Router);
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+        authService.currentUser.next(null);
+        authService.setAuthState(false);
+        router.navigate(['/login']);
+        console.log('Session expired or invalid token. Logged out.');
       }
       return throwError(() => error);
     })
