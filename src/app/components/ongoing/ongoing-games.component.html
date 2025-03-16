@@ -7,8 +7,11 @@
         <li *ngFor="let game of games" class="game-item">
             <div class="flex flex-col">
                 <span class="game-id">Game #<strong>{{ game.game_id }}</strong></span>
+                <span>Created At:</span>
+                <strong>{{ game.created_at | date: 'medium' }}</strong>
                 <span class="game-players">Created By:</span>
                 <strong>{{ game.created_by }}</strong>
+                <span>Attempts Left: {{ game.attempts_left }}</span>
             </div>
             <div class="flex flex-col flex-between">
                 <span class="game-status" [ngClass]="game.status">{{ game.status }}</span>

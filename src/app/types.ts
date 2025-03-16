@@ -29,6 +29,7 @@ export interface PublicGameResponse {
   status: string;
   created_by: string;
   created_at: string;
+  attempts_left: number;
 }
 
 export interface CreateGame {
