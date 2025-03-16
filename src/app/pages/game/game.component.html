@@ -11,7 +11,7 @@
 
     <!-- Game content -->
     <div *ngIf="!loading && !error && game" class="game-content">
-        <div class="game-header">
+        <div class="game-header card">
             <h2>Hangman Game #{{ gameId }}</h2>
             <div class="game-info">
                 <p>Status: {{ game.status }}</p>
@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <div class="hints-section">
+        <div class="hints-section card">
             <h3>Hints</h3>
             <p *ngIf="game.hints.length === 0">No Hints</p>
             <ul class="hints-list" *ngIf="game.hints.length > 0">

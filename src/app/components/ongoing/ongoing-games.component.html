@@ -8,7 +8,7 @@
             <div class="flex flex-col">
                 <span class="game-id">Game #<strong>{{ game.game_id }}</strong></span>
                 <span>Created At:</span>
-                <strong>{{ game.created_at | date: 'medium' }}</strong>
+                <strong>{{ game.created_at | date: 'shortDate' }}</strong>
                 <span class="game-players">Created By:</span>
                 <strong>{{ game.created_by }}</strong>
                 <span>Attempts Left: {{ game.attempts_left }}</span>

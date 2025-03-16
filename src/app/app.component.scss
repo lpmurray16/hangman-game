@@ -20,6 +20,8 @@ header {
 h1 {
   margin: 0;
   font-size: 1.8rem;
+  letter-spacing: 1.5px;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
   @media screen and (max-width: 668px) {
     font-size: 1rem;
   }
@@ -39,11 +41,10 @@ nav a:not(.logout-btn) {
   text-decoration: none;
   padding: 0.5rem 1rem;
   font-size: 1.2rem; // Increase the font size
-  transition: color 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 nav a:hover {
-  color: var(--secondary);
   font-style: italic; // Make text italic on hover
 }
 
@@ -54,16 +55,15 @@ nav a.active {
 .user-info {
   display: flex;
   align-items: baseline;
-  color: white;
+  color: rgb(0, 0, 0);
   gap: 8px;
+  background-color: var(--light);
+  border: 1px solid var(--shadow-color);
+  padding: 0.5rem;
   .logout-btn:hover {
-    color: var(--secondary);
     cursor: pointer;
+    color: var(--primary);
   }
-}
-
-.user-icon {
-  margin-right: 0.5rem;
 }
 
 main {
