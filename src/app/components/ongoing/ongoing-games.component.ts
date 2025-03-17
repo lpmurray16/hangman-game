@@ -11,11 +11,15 @@ import { PublicGameResponse } from '../../types';
   imports: [CommonModule, RouterModule],
   styles: [
     `
+      .ongoing-container {
+        overflow-y: auto;
+        max-height: 470px;
+      }
       .game-item {
         width: 100%;
         display: flex;
         justify-content: space-between;
-        gap:4px;
+        gap: 4px;
         padding: 16px;
         border: var(--border-width) solid var(--primary);
         border-radius: var(--border-radius);
