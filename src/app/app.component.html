@@ -2,7 +2,10 @@
   <header>
     <h1>Hangman</h1>
     <nav>
-      <a routerLink="/home" routerLinkActive="active">Home</a>
+      <a routerLink="/home" 
+         routerLinkActive="active"
+         [class.disabled-link]="!currentUser"
+         [title]="!currentUser ? 'You must log in to access this page' : ''">Home</a>
       <ng-container *ngIf="!currentUser">
         <a routerLink="/login" routerLinkActive="active">Login</a>
         <a routerLink="/register" routerLinkActive="active">Register</a>
@@ -20,4 +23,9 @@
   <main>
     <router-outlet></router-outlet>
   </main>
+
+
+  <footer>
+    <p>Made with ❤️ by <a href="https://logan-murray.dev">Logan Murray</a></p>
+  </footer>
 </div>

@@ -1,10 +1,10 @@
 <div class="home-container">
-  <div class="card welcome-card" *ngIf="!showNewGameForm">
+  <div class="card welcome-card" *ngIf="!showNewGameForm && !showJoinGameForm">
     <h1>Welcome to Hangman!</h1>
     <p class="mb-3">The classic word guessing game.</p>
     <div class="game-options">
-      <button class="btn mb-2 wiggle" (click)="createNewGame()">Create New Game</button>
-      <button class="btn btn-secondary mb-2">Join Game With ID</button>
+      <button class="btn mb-2" (click)="createNewGame()">Create New Game</button>
+      <button class="btn btn-secondary mb-2" (click)="showJoinGame()">Join Game With ID</button>
     </div>
   </div>
 
@@ -14,10 +14,27 @@
     (cancel)="onCancelNewGame()">
   </app-new-game>
 
+  <app-join-game
+    *ngIf="showJoinGameForm"
+    (cancel)="onCancelJoinGame()">
+  </app-join-game>
+
   <div class="grid mt-4">
     <div class="card">
       <h3>How to Play</h3>
-      <p>Guess the hidden word one letter at a time. Each incorrect guess brings you closer to losing!</p>
+      <p>6 wrong guesses and you lose! Each game has
+         a <u>unique 4-digit ID</u> and you can join if you know the game you are looking for.
+         Or create a new game and invite your friends simply by sharing the URL of the game!
+         <b>Ongoing games</b> are displayed below. (on mobile) or on the right (on desktop).
+      </p>
+      <p class="mt-2">
+        <b>Nice-to-Knows:</b>
+      </p>
+      <ul class="ml-4">
+        <li>Only the user who created the game can give hints.</li>
+        <li>Any user can participate in any game.</li>
+        <li>Won and Lost games remain in the database, but are no longer displayed.</li>
+      </ul>
     </div>
     <ongoing-games></ongoing-games>  
   </div>

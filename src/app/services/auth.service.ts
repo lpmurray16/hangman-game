@@ -11,6 +11,8 @@ import { environment } from '../../environments/environment';
 export class AuthService {
   private apiUrl = environment.backend_api_url + '/auth';
   private authTokenKey = 'authToken';
+  private refreshTokenKey = 'refreshToken';
+  private tokenExpiryKey = 'tokenExpiry';
   private authState = new BehaviorSubject<boolean>(this.hasToken());
   currentUser = new BehaviorSubject<User | null>(null);
 
@@ -27,6 +29,8 @@ export class AuthService {
 
   private clearToken(): void {
     localStorage.removeItem(this.authTokenKey);
+    localStorage.removeItem(this.refreshTokenKey);
+    localStorage.removeItem(this.tokenExpiryKey);
     localStorage.removeItem('currentUser');
   }
 
@@ -48,10 +52,15 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/login`, user).pipe(
       tap((response) => {
         if (response && response.session) {
-          // Store token
+          // Store tokens and expiry
           const token = response.session.access_token;
+          const refreshToken = response.session.refresh_token;
+          const expiresAt = response.session.expires_at;
+
           if (token.length > 0) {
             localStorage.setItem(this.authTokenKey, token);
+            localStorage.setItem(this.refreshTokenKey, refreshToken);
+            localStorage.setItem(this.tokenExpiryKey, expiresAt.toString());
           } else {
             console.error('Invalid token format:', token);
           }
@@ -120,5 +129,41 @@ export class AuthService {
       this.authState.next(false);
       this.clearToken();
     }
+  }
+
+  private isTokenExpired(): boolean {
+    const expiry = localStorage.getItem(this.tokenExpiryKey);
+    if (!expiry) return true;
+    return Date.now() > parseInt(expiry, 10);
+  }
+
+  private refreshSession(): Observable<any> {
+    const refreshToken = localStorage.getItem(this.refreshTokenKey);
+    if (!refreshToken) {
+      this.forceLogout();
+      return throwError(() => new Error('No refresh token available'));
+    }
+
+    interface RefreshResponse {
+      session: {
+        access_token: string;
+        refresh_token: string;
+        expires_at: number;
+      }
+    }
+
+    return this.http.post<RefreshResponse>(`${this.apiUrl}/refresh`, { refresh_token: refreshToken }).pipe(
+      tap((response) => {
+        if (response.session) {
+          localStorage.setItem(this.authTokenKey, response.session.access_token);
+          localStorage.setItem(this.refreshTokenKey, response.session.refresh_token);
+          localStorage.setItem(this.tokenExpiryKey, response.session.expires_at.toString());
+        }
+      }),
+      catchError((error) => {
+        this.forceLogout();
+        return throwError(() => error);
+      })
+    );
   }
 }

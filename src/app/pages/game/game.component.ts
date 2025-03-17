@@ -64,7 +64,7 @@ export class GameComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading game:', err);
-        this.error = 'Failed to load game. Please try again.';
+        this.error = err.error.detail;
         this.loading = false;
       },
     });

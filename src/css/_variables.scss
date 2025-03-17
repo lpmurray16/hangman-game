@@ -1,0 +1,30 @@
+/* Variables */
+:root {
+    /* Primary Colors */
+    --primary: #ff90e8;
+    --secondary: #fde400;
+    --accent: #90e8ff;
+    --dark: #000000;
+    --grey: #424242;
+    --light: #f1f1f1;
+
+    /* Neobrutalism Specific */
+    --shadow-color: rgba(0, 0, 0, 0.9);
+    --border-width: 3px;
+    --border-radius: 0px;
+    --shadow-offset-x: 6px;
+    --shadow-offset-y: 7px;
+    --box-shadow: var(--shadow-offset-x) var(--shadow-offset-y) 0 0 var(--shadow-color);
+
+    /* Typography */
+    --font-family: "Roboto Mono", monospace;
+    --font-size-base: 16px;
+    --line-height: 1.5;
+
+    /* Dark Theme Colors */
+    --dark-bg: #ffe5b4;
+    --dark-card: #f1f1f1;
+    --dark-border: #000000;
+    --dark-text: #000000;
+    --dark-shadow: rgba(255, 244, 224, 0.7);
+} 

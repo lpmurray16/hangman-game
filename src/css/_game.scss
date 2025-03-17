@@ -1,0 +1,53 @@
+/* Hangman Game Specific */
+.hangman-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    background-color: var(--dark-card);
+    border: var(--border-width) solid var(--dark-border);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.hangman-drawing {
+    border: var(--border-width) solid var(--dark);
+    padding: 1rem;
+    background-color: var(--accent);
+    box-shadow: var(--box-shadow);
+}
+
+.letter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 0.5rem;
+}
+
+.word-display {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.letter-space {
+    width: 40px;
+    height: 40px;
+    border-bottom: var(--border-width) solid var(--dark-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--dark-text);
+}
+
+.win-status {
+    background-color: #2d6a4f;
+    color: var(--dark-text);
+}
+
+.lose-status {
+    background-color: #7f1d1d;
+    color: var(--dark-text);
+} 

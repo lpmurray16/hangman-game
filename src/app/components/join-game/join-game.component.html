@@ -1,0 +1,25 @@
+<div class="card join-game-card">
+  <h2>Join Game</h2>
+  <form (ngSubmit)="$event.preventDefault(); onSubmit()">
+    <div class="form-group">
+      <label for="gameId">Enter 4-digit Game ID:</label>
+      <input 
+        type="text" 
+        id="gameId" 
+        [formControl]="gameIdControl" 
+        maxlength="4" 
+        placeholder="Enter game ID"
+        class="form-control">
+      <div class="error-message" *ngIf="gameIdControl.touched && gameIdControl.errors?.['required']">
+        Game ID is required
+      </div>
+      <div class="error-message" *ngIf="gameIdControl.touched && gameIdControl.errors?.['pattern']">
+        Game ID must be exactly 4 digits
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn" [disabled]="!gameIdControl.valid" (click)="onSubmit()">Join Game</button>
+      <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+    </div>
+  </form>
+</div> 
