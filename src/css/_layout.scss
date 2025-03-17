@@ -34,7 +34,7 @@ nav {
     gap: 1rem;
     
     @media screen and (max-width: 668px) {
-        gap: 0;
+        gap: 1.5rem;
     }
 
     a:not(.logout-btn) {
